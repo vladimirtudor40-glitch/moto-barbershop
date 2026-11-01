@@ -1,0 +1,353 @@
+<%
+  const fmt = (n) => n.toLocaleString('ro-RO');
+  const maxMin = Math.max(...biz.services.map(s => s.minutes));
+  const featured = biz.services.find(s => s.featured);
+  const rest = biz.services.filter(s => !s.featured);
+  const ratingStr = biz.rating.toLocaleString('ro-RO', { minimumFractionDigits: 2 });
+%><!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= biz.name %> · Barbershop în <%= biz.city %></title>
+  <meta name="description" content="<%= biz.name %>, barbershop în <%= biz.city %>. Fade, barbă și Pachetul Final Boss. Nota <%= ratingStr %> din <%= fmt(biz.reviews) %> de recenzii. Programări online non-stop.">
+  <meta name="theme-color" content="#000000">
+  <meta property="og:image" content="<%= base %>img/logo.png">
+  <meta property="og:title" content="<%= biz.name %> · <%= biz.city %>">
+  <meta property="og:description" content="Tuns la turație maximă. Programări online non-stop.">
+  <link rel="icon" href="<%= base %>img/logo-96.png" type="image/png">
+  <link rel="apple-touch-icon" href="<%= base %>img/logo-180.png">
+  <link rel="preload" as="image" href="<%= base %>img/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,500;0,600;0,700;0,800;1,700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="<%= base %>css/style.css">
+  <script type="application/ld+json">
+  <%- JSON.stringify({
+    '@context': 'https://schema.org', '@type': 'BarberShop', name: biz.name,
+    address: { '@type': 'PostalAddress', streetAddress: biz.address, addressLocality: biz.city, addressCountry: 'RO' },
+    geo: { '@type': 'GeoCoordinates', latitude: biz.geo.lat, longitude: biz.geo.lng },
+    aggregateRating: { '@type': 'AggregateRating', ratingValue: biz.rating, reviewCount: biz.reviews, bestRating: 5 },
+    url: biz.bookingUrl, priceRange: '10–110 lei'
+  }) %>
+  </script>
+  <script>document.documentElement.classList.add('js');</script>
+  <script id="biz-data" type="application/json"><%- JSON.stringify({ timezone: biz.timezone, hours: biz.hours }) %></script>
+</head>
+<body>
+  <a class="skip" href="#servicii">Sari la servicii</a>
+
+  <!-- Preloader: tachometer revs to redline -->
+  <div class="loader" aria-hidden="true">
+    <img class="loader__logo" src="<%= base %>img/logo.png" width="640" height="640" alt="">
+    <div class="loader__gauge">
+    <svg class="loader__dial" viewBox="0 0 200 120">
+      <path class="loader__track" d="M20 110 A80 80 0 0 1 180 110" />
+      <path class="loader__red" d="M155 53 A80 80 0 0 1 180 110" />
+      <g class="loader__ticks"></g>
+      <line class="loader__needle" x1="100" y1="110" x2="100" y2="42" />
+      <circle cx="100" cy="110" r="7" class="loader__hub" />
+    </svg>
+    <div class="loader__rpm"><span class="loader__num">0</span><small>× 1000 RPM</small></div>
+    </div>
+  </div>
+
+  <div class="ambient" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="cursor" aria-hidden="true"><span class="cursor__label">Rezervă</span></div>
+
+  <div class="progress" aria-hidden="true"><span></span></div>
+
+  <header class="nav" data-nav>
+    <a href="#top" class="brand" aria-label="<%= biz.name %>, începutul paginii">
+      <img class="brand__mark" src="<%= base %>img/logo-96.png" width="44" height="44" alt="">
+      <span class="brand__text">MOTO<b>BARBERSHOP</b></span>
+    </a>
+    <nav aria-label="Principal" class="nav__menu">
+      <span class="nav__pill" aria-hidden="true"></span>
+      <ul class="nav__links">
+        <li><a href="#servicii">Servicii</a></li>
+        <li><a href="#ritual">Ritualul</a></li>
+        <li><a href="#program">Program</a></li>
+        <li><a href="#locatie">Locație</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn--blue btn--sm magnetic" href="<%= biz.bookingUrl %>" target="_blank" rel="noopener" data-cursor="Rezervă"><span class="hide-sm">Programează-te</span><span class="show-sm">Rezervă</span></a>
+  </header>
+
+  <div id="smooth-wrapper">
+  <div id="smooth-content">
+  <main id="top">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero__streaks" aria-hidden="true" data-speed="0.6"></div>
+      <div class="hero__spot" aria-hidden="true"></div>
+      <div class="hero__grain" aria-hidden="true"></div>
+
+      <div class="hero__copy">
+        <p class="eyebrow"><span class="dot <%= status.open ? 'dot--on' : '' %>"></span><span data-status><%= status.label %></span></p>
+        <h1 class="hero__title">
+          <span class="line">Tuns la</span>
+          <span class="line">turație</span>
+          <span class="line line--glow">maximă<span class="sr-only">.</span></span>
+        </h1>
+        <p class="hero__lead">Barbershop în <%= biz.city %>. Fade-uri curate, bărbi conturate pe milimetru și pachetul care îți schimbă ziua: <strong>Final Boss</strong>.</p>
+        <div class="hero__cta">
+          <a class="btn btn--ice magnetic" href="<%= biz.bookingUrl %>" target="_blank" rel="noopener" data-cursor="Rezervă">
+            Programează-te online
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+          <a class="btn btn--navy" href="#servicii">Vezi prețurile</a>
+        </div>
+        <a class="rating" href="<%= biz.bookingUrl %>" target="_blank" rel="noopener" data-cursor="Rezervă" aria-label="Nota <%= ratingStr %> din 5, <%= fmt(biz.reviews) %> de recenzii pe MERO">
+          <span class="rating__stars" aria-hidden="true">
+            <% for (let i = 0; i < 5; i++) { %><svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z"/></svg><% } %>
+          </span>
+          <span><b><%= ratingStr %></b> · <%= fmt(biz.reviews) %> recenzii pe MERO</span>
+        </a>
+      </div>
+
+      <div class="hero__wheel" aria-hidden="true" data-speed="0.82">
+        <svg viewBox="0 0 400 400" class="wheel">
+          <defs>
+            <radialGradient id="rim" cx="50%" cy="50%" r="50%">
+              <stop offset="55%" stop-color="#0a1d5c"/><stop offset="100%" stop-color="#01040f"/>
+            </radialGradient>
+          </defs>
+          <%
+            const P = (r, deg) => { const a = (deg - 90) * Math.PI / 180; return [(200 + r * Math.cos(a)).toFixed(1), (200 + r * Math.sin(a)).toFixed(1)]; };
+          %>
+          <g class="wheel__spin">
+            <circle cx="200" cy="200" r="190" class="wheel__tyre"/>
+            <g class="wheel__tread">
+              <% for (let t = 0; t < 48; t++) { %><rect x="196" y="14" width="8" height="18" rx="2" transform="rotate(<%= t * 7.5 %> 200 200)"/><% } %>
+            </g>
+            <circle cx="200" cy="200" r="150" fill="url(#rim)" class="wheel__rim"/>
+            <circle cx="200" cy="200" r="132" class="wheel__disc"/>
+            <g class="wheel__holes">
+              <% for (let h = 0; h < 12; h++) { const [x, y] = P(108, h * 30 + 15); %><circle cx="<%= x %>" cy="<%= y %>" r="6"/><% } %>
+            </g>
+            <g class="wheel__spokes">
+              <% for (let s = 0; s < 5; s++) { const a = s * 72;
+                   const [x0, y0] = P(34, a), [cx, cy] = P(92, a + 4), [x1, y1] = P(140, a + 16), [x2, y2] = P(140, a - 9); %>
+                <path d="M<%= x0 %> <%= y0 %> Q<%= cx %> <%= cy %> <%= x1 %> <%= y1 %>"/>
+                <path d="M<%= x0 %> <%= y0 %> Q<%= cx %> <%= cy %> <%= x2 %> <%= y2 %>"/>
+              <% } %>
+            </g>
+            <circle cx="200" cy="200" r="34" class="wheel__hub"/>
+            <circle cx="200" cy="200" r="12" class="wheel__axle"/>
+          </g>
+        </svg>
+        <div class="hero__logo"><img src="<%= base %>img/logo.png" width="640" height="640" alt=""><span class="hero__shine"></span></div>
+        <div class="hero__badge">
+          <span class="hero__badge-num">Non-stop</span>
+          <span>programări online</span>
+        </div>
+      </div>
+
+      <a class="hero__scroll" href="#servicii" aria-label="Derulează la servicii">
+        <span>Scroll</span><i></i>
+      </a>
+    </section>
+
+    <!-- MARQUEE -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee__track">
+        <% for (let k = 0; k < 2; k++) { %>
+          <% biz.services.forEach(s => { %><span><%= s.name %></span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg><% }) %>
+        <% } %>
+      </div>
+      <div class="marquee__track marquee__track--rev">
+        <% for (let k = 0; k < 2; k++) { %>
+          <% biz.services.forEach(s => { %><span><%= s.name %></span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg><% }) %>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <section class="stats" aria-label="Pe scurt">
+      <div class="stat reveal">
+        <span class="stat__num" data-count="<%= biz.rating %>" data-decimals="2"><%= ratingStr %></span>
+        <span class="stat__label">nota medie pe MERO</span>
+      </div>
+      <div class="stat reveal">
+        <span class="stat__num" data-count="<%= biz.reviews %>"><%= fmt(biz.reviews) %></span>
+        <span class="stat__label">recenzii de la clienți</span>
+      </div>
+      <div class="stat reveal">
+        <span class="stat__num" data-count="<%= biz.services.length %>"><%= biz.services.length %></span>
+        <span class="stat__label">servicii, prețuri clare</span>
+      </div>
+      <div class="stat reveal">
+        <span class="stat__num">24/7</span>
+        <span class="stat__label">programări online</span>
+      </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section class="services" id="servicii" aria-labelledby="servicii-title">
+      <header class="section-head">
+        <p class="kicker">01 · Meniul de service</p>
+        <h2 id="servicii-title" class="split">Alege-ți setup-ul</h2>
+        <p class="section-head__lead">Prețuri fixe, durate reale. Bara arată cât stai în scaun.</p>
+      </header>
+
+      <div class="services__grid">
+        <% if (featured) { %>
+        <div class="boss-pin">
+        <article class="svc svc--boss reveal tilt">
+          <div class="svc__glow" aria-hidden="true"></div>
+          <span class="chip">Cel mai cerut</span>
+          <h3 class="svc__name"><%= featured.name %></h3>
+          <p class="svc__detail"><%= featured.detail %></p>
+          <div class="svc__meta">
+            <div class="rev" style="--fill: <%= featured.minutes / maxMin %>">
+              <span class="rev__bar" aria-hidden="true"><i></i></span>
+              <span class="rev__label"><%= featured.minutes %> min</span>
+            </div>
+            <p class="svc__price"><span><%= featured.price %></span> lei</p>
+          </div>
+          <a class="btn btn--stack magnetic" href="<%= biz.bookingUrl %>" target="_blank" rel="noopener" data-cursor="Rezervă">Rezervă Final Boss</a>
+        </article>
+        </div>
+        <% } %>
+
+        <ul class="svc-list" role="list">
+          <% rest.forEach((s, i) => { %>
+          <li class="svc reveal">
+            <span class="svc__idx" aria-hidden="true"><%= String(i + 2).padStart(2, '0') %></span>
+            <div class="svc__body">
+              <h3 class="svc__name"><%= s.name %></h3>
+              <p class="svc__detail"><%= s.detail %></p>
+              <div class="rev" style="--fill: <%= s.minutes / maxMin %>">
+                <span class="rev__bar" aria-hidden="true"><i></i></span>
+                <span class="rev__label"><%= s.minutes %> min</span>
+              </div>
+            </div>
+            <p class="svc__price"><span><%= s.price %></span> lei</p>
+            <a class="btn btn--orb" href="<%= biz.bookingUrl %>" target="_blank" rel="noopener" data-cursor="Rezervă" aria-label="Rezervă: <%= s.name %>, <%= s.price %> lei">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+          </li>
+          <% }) %>
+        </ul>
+      </div>
+    </section>
+
+    <!-- RITUAL: pinned horizontal ride -->
+    <section class="ritual" id="ritual" aria-labelledby="ritual-title">
+      <div class="ritual__pin">
+        <header class="ritual__head">
+          <p class="kicker">02 · Ritualul</p>
+          <h2 id="ritual-title" class="split">Pit stop în patru etape</h2>
+          <div class="odo" aria-hidden="true"><span class="odo__fill"></span></div>
+        </header>
+        <ol class="ritual__track">
+          <li class="stage">
+            <span class="stage__num">01</span>
+            <svg class="stage__icon" viewBox="0 0 48 48" aria-hidden="true"><rect x="8" y="10" width="32" height="30" rx="4"/><path d="M8 18h32M16 6v8M32 6v8M17 28l5 5 9-10"/></svg>
+            <h3>Check-in</h3>
+            <p>Îți alegi ora pe MERO, oricând, din telefon. Fără telefoane, fără așteptat la coadă.</p>
+          </li>
+          <li class="stage">
+            <span class="stage__num">02</span>
+            <svg class="stage__icon" viewBox="0 0 48 48" aria-hidden="true"><circle cx="13" cy="35" r="6"/><circle cx="35" cy="35" r="6"/><path d="M17 31L38 6M31 31L10 6"/></svg>
+            <h3>Tunsul</h3>
+            <p>Fade, clasic sau ce ai văzut pe net. Discutăm forma înainte să pornească mașina.</p>
+          </li>
+          <li class="stage">
+            <span class="stage__num">03</span>
+            <svg class="stage__icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 6c6 9 11 15 11 22a11 11 0 0 1-22 0c0-7 5-13 11-22z"/><path d="M19 30a5 5 0 0 0 5 5"/></svg>
+            <h3>Spălatul</h3>
+            <p>Spălat pe cap și scos firele tăiate, ca să pleci curat, nu cu păr pe gât.</p>
+          </li>
+          <li class="stage">
+            <span class="stage__num">04</span>
+            <svg class="stage__icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 4l4.5 12.5L41 18l-10 8 3.5 13L24 31.5 13.5 39 17 26 7 18l12.5-1.5z"/></svg>
+            <h3>Styling</h3>
+            <p>Produs potrivit pentru părul tău și finisajul final. Gata de drum.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- HOURS + LOCATION -->
+    <section class="garage" aria-label="Program și locație">
+      <div class="hours reveal" id="program">
+        <p class="kicker">03 · Program</p>
+        <h2 class="split">Când e garajul deschis</h2>
+        <p class="status <%= status.open ? 'status--open' : '' %>" data-status-pill>
+          <span class="dot <%= status.open ? 'dot--on' : '' %>"></span><span data-status><%= status.label %></span>
+        </p>
+        <table class="hours__table">
+          <caption class="sr-only">Program de lucru</caption>
+          <tbody>
+            <% biz.hours.forEach((h, i) => { %>
+            <tr class="<%= i === status.todayIndex ? 'is-today' : '' %>" <%- i === status.todayIndex ? 'aria-current="date"' : '' %>>
+              <th scope="row"><%= h.day %><% if (i === status.todayIndex) { %> <small>azi</small><% } %></th>
+              <td><%= h.open ? `${h.open} – ${h.close}` : 'Închis' %></td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="location reveal" id="locatie">
+        <p class="kicker">04 · Locație</p>
+        <h2 class="split">Parchează aici</h2>
+        <address>
+          <%= biz.address %><br><%= biz.city %>
+        </address>
+        <p class="location__note"><%= biz.addressNote %></p>
+        <div class="map">
+          <iframe title="Hartă: <%= biz.name %>, <%= biz.address %>, <%= biz.city %>" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+            src="https://maps.google.com/maps?q=<%= biz.geo.lat %>,<%= biz.geo.lng %>&z=17&output=embed"></iframe>
+        </div>
+        <a class="btn btn--outline" href="<%= biz.mapsUrl %>" target="_blank" rel="noopener" data-cursor="Hartă">
+          Deschide în Google Maps
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg>
+        </a>
+      </div>
+    </section>
+
+    <!-- FINAL CTA -->
+    <section class="finale" aria-labelledby="finale-title">
+      <div class="finale__road" aria-hidden="true"></div>
+      <div class="finale__glow" aria-hidden="true"></div>
+      <img class="finale__logo" src="<%= base %>img/logo-180.png" width="180" height="180" alt="Logo Moto Barbershop Constanța" loading="lazy">
+      <p class="kicker">Ultima oprire</p>
+      <h2 id="finale-title" class="finale__title split">Pornește motorul.</h2>
+      <p class="finale__lead">Locurile se ocupă repede. Prinde ora care-ți convine.</p>
+      <a class="btn btn--ramp btn--xl magnetic" href="<%= biz.bookingUrl %>" target="_blank" rel="noopener" data-cursor="Rezervă">
+        Programează-te pe MERO
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span class="footer__brand"><img src="<%= base %>img/logo-96.png" width="40" height="40" alt="" loading="lazy"><span class="brand__text">MOTO<b>BARBERSHOP</b></span></span>
+    <p><%= biz.address %>, <%= biz.city %></p>
+    <p>© <%= year %> <%= biz.name %></p>
+  </footer>
+  </div>
+  </div>
+
+  <!-- Scroll speedometer: needle follows scroll speed -->
+  <div class="speedo" aria-hidden="true">
+    <svg viewBox="0 0 100 60">
+      <path d="M10 55 A40 40 0 0 1 90 55" class="speedo__track"/>
+      <path d="M10 55 A40 40 0 0 1 90 55" class="speedo__fill"/>
+      <line x1="50" y1="55" x2="50" y2="22" class="speedo__needle"/>
+    </svg>
+    <span class="speedo__val">0</span><small>km/h</small>
+  </div>
+
+  <script src="<%= base %>vendor/gsap/gsap.min.js" defer></script>
+  <script src="<%= base %>vendor/gsap/ScrollTrigger.min.js" defer></script>
+  <script src="<%= base %>vendor/gsap/SplitText.min.js" defer></script>
+  <script src="<%= base %>vendor/gsap/ScrollSmoother.min.js" defer></script>
+  <script src="<%= base %>vendor/gsap/CustomEase.min.js" defer></script>
+  <script src="<%= base %>js/main.js" defer></script>
+</body>
+</html>

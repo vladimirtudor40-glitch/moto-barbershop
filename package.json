@@ -1,0 +1,20 @@
+{
+  "name": "moto-barbershop",
+  "version": "1.0.0",
+  "description": "Site pentru Moto Barbershop, Constanța",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "build": "node build.js"
+  },
+  "dependencies": {
+    "compression": "^1.8.2",
+    "ejs": "^7.0.2",
+    "express": "^5.3.0",
+    "gsap": "^3.15.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

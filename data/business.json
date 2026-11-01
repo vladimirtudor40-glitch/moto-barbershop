@@ -1,0 +1,35 @@
+{
+  "name": "Moto Barbershop",
+  "city": "Constanța",
+  "address": "Str. Dreptății nr. 1, bl. O, sc. F, parter",
+  "addressNote": "Intrarea este din Strada Dreptății.",
+  "bookingUrl": "https://mero.ro/p/moto-barbershop",
+  "mapsUrl": "https://www.google.com/maps/place/Moto+Barbershop+Non-Stop+Programari/@44.1784234,28.6209914,18z",
+  "geo": { "lat": 44.1784234, "lng": 28.6209914 },
+  "rating": 4.98,
+  "reviews": 2415,
+  "timezone": "Europe/Bucharest",
+  "hours": [
+    { "day": "Luni", "open": "10:00", "close": "18:00" },
+    { "day": "Marți", "open": "10:00", "close": "18:00" },
+    { "day": "Miercuri", "open": "10:00", "close": "18:00" },
+    { "day": "Joi", "open": "10:00", "close": "18:00" },
+    { "day": "Vineri", "open": "10:00", "close": "18:00" },
+    { "day": "Sâmbătă", "open": "10:00", "close": "16:00" },
+    { "day": "Duminică", "open": null, "close": null }
+  ],
+  "services": [
+    {
+      "name": "Pachet Final Boss",
+      "detail": "Tuns + spălat + styling",
+      "price": 95,
+      "minutes": 60,
+      "featured": true
+    },
+    { "name": "Tuns cu barbă", "detail": "Tunsoare completă și aranjat barbă", "price": 110, "minutes": 60 },
+    { "name": "Tuns bărbați fade", "detail": "Fade curat, lucrat pe detaliu", "price": 80, "minutes": 40 },
+    { "name": "Aranjat barbă", "detail": "Contur, lungime și formă", "price": 50, "minutes": 20 },
+    { "name": "Spălat pe cap", "detail": "Spălat și masaj scurt", "price": 15, "minutes": 10 },
+    { "name": "Styling", "detail": "Produs și finisaj", "price": 10, "minutes": 5 }
+  ]
+}
